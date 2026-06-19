@@ -12,7 +12,42 @@ Laplace's Equation Relationship: If the region of space has zero source (f = 0),
 Intuitive Meaning: Imagine u is the physical displacement of a rubber sheet, and f is the force pushing down on it at specific points. The equation mathematically balances how much the field curves based on the applied force.
 
 Multigrid method:
+a multigrid method (MG method) is an algorithm for solving differential equations using a hierarchy of discretizations.
+an example of a class of techniques called multiresolution methods, very useful in problems exhibiting multiple scales of behavior.
+The main idea of multigrid is to accelerate the convergence of a basic iterative method (known as relaxation, which generally reduces short-wavelength error) by a global correction of the fine grid solution approximation from time to time, accomplished by solving a coarse problem. 
+coarse problem, while cheaper to solve, is similar to the fine grid problem in that it also has short- and long-wavelength errors.
+This recursive process is repeated until a grid is reached where the cost of direct solution there is negligible compared to the cost of one relaxation sweep on the fine grid.
 
+V-Cycle MATLAB:
+function phi = V_Cycle(phi,f,h)
+    % Recursive V-Cycle Multigrid for solving the Poisson equation (\nabla^2 phi = f) on a uniform grid of spacing h
+
+    % Pre-Smoothing
+    phi = smoothing(phi,f,h);
+
+    % Compute Residual Errors
+    r = residual(phi,f,h);
+
+    % Restriction
+    rhs = restriction(r);
+
+    eps = zeros(size(rhs));
+
+    % stop recursion at smallest grid size, otherwise continue recursion
+    if smallest_grid_size_is_achieved
+        eps = coarse_level_solve(eps,rhs,2*h);
+    else
+        eps = V_Cycle(eps,rhs,2*h);
+    end
+
+    % Prolongation and Correction
+    phi = phi + prolongation(eps);
+
+    % Post-Smoothing
+    phi = smoothing(phi,f,h);
+end
+
+I will be using CUDA C++, as GPUs are well suited to solving these problems, due to their large memory bandwidth and thousands of compute cores. I will stick with FP32, due to significant fall-off in performance on the GPU I am using. 104TFLOPS vs 1.67TFLOP for FP32 vs FP64, but may experiment with different levels of precision for each grid cycle.
 
 Plan:
 Want to take a fused kernel approach to multi-grid v-cycle, as launching multiple kernels add a lot of latency. 
