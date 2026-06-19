@@ -20,30 +20,29 @@ This recursive process is repeated until a grid is reached where the cost of dir
 
 V-Cycle MATLAB:
 function phi = V_Cycle(phi,f,h)
-    % Recursive V-Cycle Multigrid for solving the Poisson equation (\nabla^2 phi = f) on a uniform grid of spacing h
+// Recursive V-Cycle Multigrid for solving the Poisson equation (\nabla^2 phi = f) on a uniform grid of spacing h
 
-    % Pre-Smoothing
+// Pre-Smoothing
     phi = smoothing(phi,f,h);
 
-    % Compute Residual Errors
+// Compute Residual Errors
     r = residual(phi,f,h);
 
-    % Restriction
+// Restriction
     rhs = restriction(r);
-
     eps = zeros(size(rhs));
 
-    % stop recursion at smallest grid size, otherwise continue recursion
+// stop recursion at smallest grid size, otherwise continue recursion
     if smallest_grid_size_is_achieved
         eps = coarse_level_solve(eps,rhs,2*h);
     else
         eps = V_Cycle(eps,rhs,2*h);
     end
 
-    % Prolongation and Correction
+// Prolongation and Correction
     phi = phi + prolongation(eps);
 
-    % Post-Smoothing
+// Post-Smoothing
     phi = smoothing(phi,f,h);
 end
 
