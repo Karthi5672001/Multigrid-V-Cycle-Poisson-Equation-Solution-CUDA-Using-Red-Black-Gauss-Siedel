@@ -1,0 +1,48 @@
+GPU‑Accelerated 3‑D Poisson Solver using a Multigrid V‑Cycle using CUDA
+-∇^2(u(x))=f(x) x∈[0,L]^3
+Dirichlet boundary conditions - function is explicitly fixed to a specific, known value along the entire boundary of the domain.
+u(x)=g(x) 
+Multigrid V‑Cycle:
+Need to Store the 3‑D field in a linearized array (float *d_u, float *d_f, float *d_r).
+Use xyz‑order (i.e., index = z*Ny*Nx + y*Nx + x).
+
+Guass-Sidel Method:
+
+1. Initialise each Φi,j to some initial guess.
+2. Apply the boundary conditions.
+3. For every interior grid point, calculate the quantity and replace Φi,j with Φ∗i,j
+Φ∗i,j = 1/4 (Φi+1,j + Φi−1,j + Φi,j+1 + Φi,j−1 − σ(xi, yj )δx^2).
+5. Repeat from step 2 until the difference between the latest two approximations is
+smaller than some set tolerance everywhere.
+
+in python:
+for j in range(1, ny-1):
+        for i in range(1, nx-1):
+            pnew[i, j] = (0.25 * (p[i-1, j]+p[i+1, j]+p[i, j-1]+ p[i, j+1]-b[i, j]*dx**2))
+				
+				
+C++:
+for (int j = 0; j < ny; i++){
+	for (int i = 0; i < nx; i++){
+		pnew[i, j] = (0.25 * (p[i-1, j]+p[i+1, j]+p[i, j-1] + p[i, j+1]-b[i, j]*dx**2)))
+	}
+}
+Grid hierarchy – Build a series of uniform grids: h,2h,4h,…,2^Lh,2h,4h,…,2Lh where h=L/N and N=2L (power‑of‑two makes coarsening trivial).
+Pre‑smoothing – Apply ν₁ steps of a red‑black Gauss‑Seidel (or Jacobi) smoother on the fine grid.
+Residual computation – r=f−Au.
+Restriction – Full‑weighting (inject coarse‑grid residual).
+Coarse‑grid solve – Recursively call the V‑cycle on the next coarser level (or do a direct solve on the coarsest grid, e.g., a few Jacobi iterations).
+Prolongation – Linear interpolation of the coarse‑grid correction to the fine grid.
+Post‑smoothing – Apply ν₂ steps of the same smoother.
+Boundary handling – Dirichlet values are kept fixed; they are simply never updated.
+
+Write device kernels for:
+• Red‑black Gauss‑Seidel sweep (two kernels: red, black).
+• Residual computation.
+• Full‑weighting restriction.
+• Linear interpolation prolongation.
+• Norm reduction (L2).
+
+fourth-order compact approximation scheme of −u(x, y, z) = f (x, y, z), (x, y, z) ∈ sigma:
+((h^2)/2)*(6 f_(i, j,k) + f_(i+1, j,k) + f_(i−1, j,k)
++ f_(i, j+1,k) + f_(i, j−1,k) + f_(i, j,k+1) + f_(i, j,k−1))
