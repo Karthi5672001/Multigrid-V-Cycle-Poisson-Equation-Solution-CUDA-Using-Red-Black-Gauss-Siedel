@@ -77,44 +77,44 @@ Cache-locality - Keeps adjacent stencil data inside L1/Shared memory subsystem, 
 Initial conclusions on successful compilation and execution:
 Program is executed extremely quickly, completing in 8.49 seconds. Suggesting that I had much more headroom for a more complex example. This is a memory bound problem; the actual computation is finished very quickly.
 Nsight Event View:
-Name	Start	Duration	TID
-InitializeProblem	4.08954s	2.584 ms	3264
-Lazy Function Loading	4.09206s	36.541 μs	3264
-cudaDeviceSynchronize	4.09213s	6.134 ms	3264
-cuLibraryGetKernel	4.09829s	1.410 μs	3264
-cuKernelGetName	4.09829s	430 ns	3264
-red_black_gauss_siedel_red	4.09829s	52.982 μs	3264
-Lazy Function Loading	4.09829s	32.041 μs	3264
-cuLibraryGetKernel	4.09835s	430 ns	3264
-cuKernelGetName	4.09835s	140 ns	3264
+Name	                        Start	    Duration	TID
+InitializeProblem	            4.08954s	2.584 ms	3264
+Lazy Function Loading	        4.09206s	36.541 μs	3264
+cudaDeviceSynchronize	        4.09213s	6.134 ms	3264
+cuLibraryGetKernel	            4.09829s	1.410 μs	3264
+cuKernelGetName	                4.09829s	430 ns	    3264
+red_black_gauss_siedel_red	    4.09829s	52.982 μs	3264
+Lazy Function Loading	        4.09829s	32.041 μs	3264
+cuLibraryGetKernel	            4.09835s	430 ns	    3264
+cuKernelGetName	                4.09835s	140 ns	    3264
 red_black_gauss_siedel_black	4.09835s	23.151 μs	3264
-Lazy Function Loading	4.09835s	16.580 μs	3264
-cuKernelGetName	4.09837s	90 ns	3264
-red_black_gauss_siedel_red	4.09837s	4.730 μs	3264
-cuKernelGetName	4.09838s	80 ns	3264
+Lazy Function Loading	        4.09835s	16.580 μs	3264
+cuKernelGetName	                4.09837s	90 ns	    3264
+red_black_gauss_siedel_red	    4.09837s	4.730 μs	3264
+cuKernelGetName	                4.09838s	80 ns	    3264
 red_black_gauss_siedel_black	4.09838s	4.770 μs	3264
-cuLibraryGetKernel	4.09838s	390 ns	3264
-cuKernelGetName	4.09838s	80 ns	3264
-Residual_function	4.09838s	16.980 μs	3264
-Lazy Function Loading	4.09838s	11.490 μs	3264
-cudaMemset	4.0984s	14.001 μs	3264
-cuLibraryGetKernel	4.09841s	140 ns	3264
-cuKernelGetName	4.09841s	140 ns	3264
-Coarsen	4.09841s	17.520 μs	3264
-Lazy Function Loading	4.09841s	12.820 μs	3264
-cuKernelGetName	4.09843s	100 ns	3264
-red_black_gauss_siedel_red	4.09843s	5.401 μs	3264
-cuKernelGetName	4.09844s	230 ns	3264
+cuLibraryGetKernel	            4.09838s	390 ns	    3264
+cuKernelGetName	                4.09838s	80 ns	    3264
+Residual_function	            4.09838s	16.980 μs	3264
+Lazy Function Loading	        4.09838s	11.490 μs	3264
+cudaMemset	                    4.0984s	    14.001 μs	3264
+cuLibraryGetKernel	            4.09841s	140 ns	    3264
+cuKernelGetName	                4.09841s	140 ns	    3264
+Coarsen	                        4.09841s	17.520 μs	3264
+Lazy Function Loading	        4.09841s	12.820 μs	3264
+cuKernelGetName	                4.09843s	100 ns	    3264
+red_black_gauss_siedel_red	    4.09843s	5.401 μs	3264
+cuKernelGetName	                4.09844s	230 ns	    3264
 red_black_gauss_siedel_black	4.09844s	4.220 μs	3264
-cuKernelGetName	4.09844s	80 ns	3264
-red_black_gauss_siedel_red	4.09844s	4.970 μs	3264
-cuKernelGetName	4.09845s	80 ns	3264
+cuKernelGetName	                4.09844s	80 ns	    3264
+red_black_gauss_siedel_red	    4.09844s	4.970 μs	3264
+cuKernelGetName	                4.09845s	80 ns	    3264
 red_black_gauss_siedel_black	4.09845s	4.500 μs	3264
-cuKernelGetName	4.09845s	140 ns	3264
-Residual_function	4.09845s	4.850 μs	3264
-cudaMemset	4.09846s	5.790 μs	3264
-cuKernelGetName	4.09846s	140 ns	3264
-Coarsen	4.09846s	4.730 μs	3264
+cuKernelGetName	                4.09845s	140 ns	    3264
+Residual_function	            4.09845s	4.850 μs	3264
+cudaMemset	                    4.09846s	5.790 μs	3264
+cuKernelGetName	                4.09846s	140 ns	    3264
+Coarsen	                        4.09846s	4.730 μs	3264
 
 From this, we see that the the actual computation is on the order of microseconds/ milliseconds. Further examination of the Event View and sorting by duration shows that our longest events are cudaMemcpy, cudaDeviceSynchronize and cudaMalloc, with not much of a relation to the iteration step. That is to say, it is not related to the size of the grid as it varies over number of iterations, it is a fairly constant time consumption.
 Sorting by Time duration:
