@@ -1,4 +1,12 @@
 # Multigrid-V-Cycle-Poisson-Equation-Solution-CUDA-Using-Red-Black-Gauss-Siedel
+Docker instructions:
+In Powershell type: 
+docker build -t cuda133-cpp-dev .
+docker run --gpus all -it -v ${PWD}:/workspace cuda133-cpp-dev bash
+In container type:
+nvcc --version //check the version and ensure not broken
+nvcc -O3 --use_fast_math --generate-code arch=compute_120,code=sm_120 --ptxas-options=-v Poisson_basic.cu -o Poisson_solver
+
 Implementing a Poisson equation solver that takes a multigrid approach using Red-Black Gauss-Siedel to calculate a solution for a given test equation.
 
 Poisson Equation:
