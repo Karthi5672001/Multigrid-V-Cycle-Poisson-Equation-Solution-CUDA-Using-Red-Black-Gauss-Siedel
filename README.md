@@ -76,6 +76,7 @@ Cache-locality - Keeps adjacent stencil data inside L1/Shared memory subsystem, 
 
 Initial conclusions on successful compilation and execution:\
 Program is executed extremely quickly, completing in 8.49 seconds. Suggesting that I had much more headroom for a more complex example. This is a memory bound problem; the actual computation is finished very quickly.\
+In this example, we ran in block sizes of (8,8,8), which was a good starting point, but may not be optimal for this device. Additionally, our compiler flags haven't been optimised for this application, and I will read up on what are optimal for the type of program I am running
 Nsight Event View:\
 Name	                        Start	    Duration	TID\
 InitializeProblem	            4.08954s	2.584 ms	3264\
@@ -116,7 +117,7 @@ cudaMemset	                    4.09846s	5.790 μs	3264\
 cuKernelGetName	                4.09846s	140 ns	    3264\
 Coarsen	                        4.09846s	4.730 μs	3264\
 
-From this, we see that the the actual computation is on the order of microseconds/ milliseconds. Further examination of the Event View and sorting by duration shows that our longest events are cudaMemcpy, cudaDeviceSynchronize and cudaMalloc, with not much of a relation to the iteration step. That is to say, it is not related to the size of the grid as it varies over number of iterations, it is a fairly constant time consumption.\
+From this, we see that the the actual computation is on the order of microseconds/ milliseconds. Further examination of the Event View and sorting by duration shows that our longest events are cudaMemcpy, cudaDeviceSynchronize and cudaMalloc, with no significant relation to the iteration step. That is to say, it is not related to the changing size of the grid as it varies over number of iterations, as it is a fairly constant time consumption.\
 Sorting by Time duration:\
 Name	                Start	    Duration	TID\
 cudaMemcpy	            5.94264s	249.006 ms	3264\
