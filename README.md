@@ -1,4 +1,4 @@
-# Multigrid-V-Cycle-Poisson-Equation-Solution-CUDA-Using-Red-Black-Gauss-Siedel\
+# Multigrid-V-Cycle-Poisson-Equation-Solution-CUDA-Using-Red-Black-Gauss-Siedel
 Docker instructions:\
 In Powershell type:\
 docker build -t cuda133-cpp-dev .\
