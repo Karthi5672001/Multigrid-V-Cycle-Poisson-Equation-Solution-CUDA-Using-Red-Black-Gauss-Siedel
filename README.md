@@ -162,3 +162,5 @@ cudaMalloc	            0.942343s	341.602 μs	3264\
 cudaMalloc	            0.942686s	336.848 μs	3264\
 cudaMalloc	            0.941428s	321.419 μs	3264\
 cuLibraryGetKernel	    4.08921s	316.364 μs	3264\
+
+Changing block size from (8,8,8) to (32, 8, 1) gave very minimal difference. Not suprising, given that this is a highly memory bound application. If I want to see significant improvements, I need to consider efficient loading and unloading of data and variables, which in some cases, could include serious redesign of the code.
