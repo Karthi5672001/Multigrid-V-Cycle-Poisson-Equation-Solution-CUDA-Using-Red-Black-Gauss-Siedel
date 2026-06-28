@@ -65,6 +65,7 @@ Create a fused kernel that reads the corrected coarse-grid solution, prolongates
 Reads the Coarse\
 
 Extension:
+Switch to FP64 instead of FP32, for less rounding errors. I may decide to stick with FP32, given the substantial FLOPS advantage of FP32 over FP64 on Blackwell GPUs (ratio of 1:64)\
 Temporal Blocking - For even greater efficiency, multiple full iterations can be fused into a single kernel using temporal blocking.
 1. A larger spatial tile is loaded into shared memory
 2. Threads iterate through multiple red-black cycles purely inside cache and shared memory, safely advancing solution through multiple steps.
