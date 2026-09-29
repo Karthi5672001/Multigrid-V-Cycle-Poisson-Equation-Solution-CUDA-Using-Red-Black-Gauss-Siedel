@@ -45,7 +45,7 @@ __global__ void InitializeProblem(float* __restrict__ f,
                                   const size_t Ny, 
                                   const size_t Nz, 
                                   const float h) 
-{   // Use size_t for avoiding out of bounds errors
+{   // Use size_t for avoiding overflow errors
     size_t x = blockIdx.x * blockDim.x + threadIdx.x;
     size_t y = blockIdx.y * blockDim.y + threadIdx.y;
     size_t z = blockIdx.z * blockDim.z + threadIdx.z;
